@@ -31,7 +31,18 @@ npm run test:e2e
 ## Dependencies and IDE (Savyre / containers)
 
 - **`@playwright/test`** and **`tree-kill`** are listed under **`dependencies`** in the root `package.json` so a normal **`npm install`** (including environments that omit devDependencies) still has what **`scripts/run-e2e.js`** needs.
-- The e2e runner uses **readiness URLs and `BASE_URL` with the hostname `localhost` only** (not `127.0.0.1`), aligned with Vite **`--host localhost`**, so HTTP probes and the browser target the same host in constrained environments.
+- **`scripts/run-e2e.js`** probes **`http://[::1]:<port>/...`** by default (`E2E_PROBE_HOST` defaults to **`::1`**). In some environments Vite listens on IPv6 loopback only; **`http://localhost`** can resolve to **`127.0.0.1`** and hang. **`BASE_URL`** for Playwright uses the same host (e.g. **`http://[::1]:<uiPort>`**). Override if needed: `E2E_PROBE_HOST=localhost npm run test:e2e`.
+- Manual **`npm run dev -w client`** stays **`vite` only**; the e2e script passes **`--port --strictPort --host`** to match the probe host.
+
+### Playwright browsers and OS libraries (Linux / IDE images)
+
+After **`npx playwright install`**, if the browser fails to start, install system dependencies (Linux):
+
+```bash
+npx playwright install-deps
+```
+
+Or use **`sudo`** when the image requires it. Missing GTK / libnss often shows up as host-deps warnings in headless/IDE runs.
 
 ## License
 

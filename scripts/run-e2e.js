@@ -9,10 +9,17 @@ const kill = require('tree-kill');
 
 const rootDir = path.resolve(__dirname, '..');
 
+/**
+ * Savyre IDE / some containers: HTTP to 127.0.0.1 can fail while "localhost" works.
+ * All readiness probes, Playwright BASE_URL, and Vite --host must use this host only
+ * (never 127.0.0.1 for probes or browser URL).
+ */
+const E2E_HOST = 'localhost';
+
 function getFreePort() {
   return new Promise((resolve, reject) => {
     const server = net.createServer();
-    server.listen(0, '127.0.0.1', () => {
+    server.listen(0, E2E_HOST, () => {
       const addr = server.address();
       const port = typeof addr === 'object' && addr ? addr.port : null;
       server.close((err) => {
@@ -52,8 +59,6 @@ function waitForOk(url, { intervalMs = 500, timeoutMs = 60000 } = {}) {
 }
 
 async function main() {
-  const host = process.env.E2E_DEV_HOST || 'localhost';
-
   const dataDir = path.join(rootDir, 'data');
   const dbPath = path.join(dataDir, 'app.db');
   if (fs.existsSync(dbPath)) {
@@ -104,7 +109,7 @@ async function main() {
       shell: process.platform === 'win32',
     });
 
-    const apiReadyUrl = `http://localhost:${apiPort}/api/health`;
+    const apiReadyUrl = `http://${E2E_HOST}:${apiPort}/api/health`;
     console.log('Waiting for API readiness:', apiReadyUrl);
     await waitForOk(apiReadyUrl, { timeoutMs: 120000 });
     console.log('API ready.');
@@ -113,7 +118,7 @@ async function main() {
     const clientEnv = {
       ...process.env,
       API_PORT: String(apiPort),
-      E2E_DEV_HOST: host,
+      E2E_DEV_HOST: E2E_HOST,
     };
     clientProc = spawn(
       'npm',
@@ -127,7 +132,7 @@ async function main() {
         String(uiPort),
         '--strictPort',
         '--host',
-        host,
+        E2E_HOST,
       ],
       {
         cwd: rootDir,
@@ -137,12 +142,12 @@ async function main() {
       },
     );
 
-    const uiReadyUrl = `http://localhost:${uiPort}/`;
+    const uiReadyUrl = `http://${E2E_HOST}:${uiPort}/`;
     console.log('Waiting for UI readiness:', uiReadyUrl);
     await waitForOk(uiReadyUrl, { timeoutMs: 600000 });
     console.log('UI ready.');
 
-    const baseUrl = `http://${host}:${uiPort}`;
+    const baseUrl = `http://${E2E_HOST}:${uiPort}`;
     console.log('Running Playwright with BASE_URL=' + baseUrl);
 
     exitCode = await new Promise((resolve) => {
@@ -152,7 +157,7 @@ async function main() {
           ...process.env,
           BASE_URL: baseUrl,
           API_PORT: String(apiPort),
-          E2E_DEV_HOST: host,
+          E2E_DEV_HOST: E2E_HOST,
         },
         stdio: 'inherit',
         shell: process.platform === 'win32',

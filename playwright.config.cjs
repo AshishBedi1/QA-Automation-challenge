@@ -1,5 +1,6 @@
 const { defineConfig } = require('@playwright/test');
 
+/** Set by scripts/run-e2e.js — never hardcode 127.0.0.1 or a fixed port here. */
 const baseURL = process.env.BASE_URL || '';
 
 module.exports = defineConfig({

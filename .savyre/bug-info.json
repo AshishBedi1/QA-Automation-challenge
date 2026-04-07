@@ -1,0 +1,6 @@
+{
+  "description": "The Playwright smoke test for the Course Marketplace must verify that the public home page loads and shows the main catalog entry point. Candidates run `npm run test:e2e` from the repo root; the runner starts the API and Vite, sets BASE_URL, and executes the spec in `e2e/app.spec.js`. Ensure the app serves `/` with the correct document title, a visible level-1 heading \"Course Marketplace\", and the tagline about browsing courses—so the assessment question reflects a real UI contract, not an empty or broken shell.",
+  "expectedOutcome": "`npm run test:e2e` completes successfully: Playwright opens BASE_URL, the page title matches \"Course Marketplace\", the h1 \"Course Marketplace\" is visible, and the tagline \"Browse courses and buy your next skill\" is visible. No hardcoded ports in tests; BASE_URL comes from the environment.",
+  "hint": "If tests fail, confirm both workspaces run (`npm run dev -w server` and client) and that `playwright.config.cjs` uses `process.env.BASE_URL`. The spec lives under `e2e/` and only asserts the home route smoke checks.",
+  "bugFilePath": "e2e/app.spec.js"
+}

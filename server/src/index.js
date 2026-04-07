@@ -28,6 +28,23 @@ const courses = [
   { id: 'c20', title: 'Career Skills for Developers', price: 33, hours: 4, category: 'Career' },
 ];
 
+/**
+ * Thumbnail paths are served by the Vite app from `client/public/thumbnails/`
+ * (bundled SVGs — no external network required).
+ */
+function thumbnailIndex(courseId) {
+  const n = parseInt(String(courseId).replace(/\D/g, ''), 10) || 0;
+  return ((n - 1) % 6 + 6) % 6;
+}
+
+function courseWithImage(course) {
+  const idx = thumbnailIndex(course.id);
+  return {
+    ...course,
+    image: `/thumbnails/course-${idx}.svg`,
+  };
+}
+
 function sendJson(res, status, body) {
   const data = JSON.stringify(body);
   res.writeHead(status, {
@@ -47,7 +64,7 @@ const server = http.createServer((req, res) => {
   }
 
   if (req.method === 'GET' && url.pathname === '/api/courses') {
-    sendJson(res, 200, { courses });
+    sendJson(res, 200, { courses: courses.map(courseWithImage) });
     return;
   }
 

@@ -2,6 +2,26 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import './App.css'
 
 const ALL = 'All'
+const FALLBACK_THUMB = '/thumbnails/course-0.svg'
+
+function CourseThumbnail({ src, className }) {
+  const [current, setCurrent] = useState(src || FALLBACK_THUMB)
+  useEffect(() => {
+    setCurrent(src || FALLBACK_THUMB)
+  }, [src])
+  return (
+    <img
+      className={className}
+      src={current}
+      alt=""
+      loading="lazy"
+      decoding="async"
+      onError={() => {
+        if (current !== FALLBACK_THUMB) setCurrent(FALLBACK_THUMB)
+      }}
+    />
+  )
+}
 
 export default function App() {
   const [courses, setCourses] = useState([])
@@ -161,7 +181,11 @@ export default function App() {
             <ul className="cart-list">
               {cartItems.map((c) => (
                 <li key={c.id}>
-                  <span>{c.title}</span>
+                  <CourseThumbnail
+                    src={c.image || FALLBACK_THUMB}
+                    className="cart-thumb"
+                  />
+                  <span className="cart-line-title">{c.title}</span>
                   <span>${c.price}</span>
                 </li>
               ))}
@@ -188,19 +212,27 @@ export default function App() {
               const inCart = Boolean(cart[c.id])
               return (
                 <article key={c.id} className="course-card">
-                  <h3>{c.title}</h3>
-                  <p className="meta">
-                    {c.category} · {c.hours}h
-                  </p>
-                  <p className="price">${c.price}</p>
-                  <button
-                    type="button"
-                    className="buy-btn"
-                    disabled={owned || inCart}
-                    onClick={() => addToCart(c)}
-                  >
-                    {owned ? 'Owned' : inCart ? 'In cart' : 'Add to cart'}
-                  </button>
+                  <div className="course-card__media">
+                    <CourseThumbnail
+                      src={c.image || FALLBACK_THUMB}
+                      className="course-card__image"
+                    />
+                  </div>
+                  <div className="course-card__body">
+                    <h3>{c.title}</h3>
+                    <p className="meta">
+                      {c.category} · {c.hours}h
+                    </p>
+                    <p className="price">${c.price}</p>
+                    <button
+                      type="button"
+                      className="buy-btn"
+                      disabled={owned || inCart}
+                      onClick={() => addToCart(c)}
+                    >
+                      {owned ? 'Owned' : inCart ? 'In cart' : 'Add to cart'}
+                    </button>
+                  </div>
                 </article>
               )
             })}
@@ -222,6 +254,12 @@ export default function App() {
           </section>
         )}
       </main>
+
+      <footer className="site-footer">
+        <p className="image-credit">
+          Thumbnails are bundled SVG artwork in this repo (no external image hosts).
+        </p>
+      </footer>
     </div>
   )
 }

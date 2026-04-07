@@ -1,0 +1,16 @@
+{
+  "name": "qa-automation-challenge",
+  "private": true,
+  "version": "0.0.0",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "test:e2e": "node scripts/run-e2e.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "tree-kill": "^1.2.2"
+  }
+}

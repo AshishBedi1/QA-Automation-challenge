@@ -56,19 +56,20 @@ function sendJson(res, status, body) {
 
 const server = http.createServer((req, res) => {
   const url = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`);
+  const path = url.pathname;
 
-  if (req.method === 'GET' && url.pathname === '/api/health') {
+  if (req.method === 'GET' && (path === '/api/health' || path === '/health')) {
     res.writeHead(200);
     res.end();
     return;
   }
 
-  if (req.method === 'GET' && url.pathname === '/api/courses') {
+  if (req.method === 'GET' && (path === '/api/courses' || path === '/courses')) {
     sendJson(res, 200, { courses: courses.map(courseWithImage) });
     return;
   }
 
-  if (req.method === 'POST' && url.pathname === '/api/purchase') {
+  if (req.method === 'POST' && (path === '/api/purchase' || path === '/purchase')) {
     let raw = '';
     req.on('data', (chunk) => {
       raw += chunk;

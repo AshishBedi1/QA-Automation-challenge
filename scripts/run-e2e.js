@@ -10,15 +10,18 @@ const kill = require('tree-kill');
 const rootDir = path.resolve(__dirname, '..');
 
 /**
- * Loopback for HTTP readiness + Playwright. Default `::1` matches Vite when it
- * listens on IPv6 only — `http://localhost:...` often resolves to 127.0.0.1 and
- * never connects. Override with E2E_PROBE_HOST=localhost (or 127.0.0.1) if needed.
+ * Use explicit IPv4 loopback for readiness + Playwright. Node often resolves
+ * "localhost" to 127.0.0.1 while Vite may only listen on ::1 unless bound to
+ * all interfaces — we start Vite with --host 0.0.0.0 and probe 127.0.0.1.
+ * Override: E2E_PROBE_HOST (e.g. localhost) if your environment requires it.
  */
-const probeHost = process.env.E2E_PROBE_HOST || '::1';
+const loopback =
+  process.env.E2E_PROBE_HOST && process.env.E2E_PROBE_HOST.length > 0
+    ? process.env.E2E_PROBE_HOST
+    : '127.0.0.1';
 
-/** Build http://host:port with brackets for IPv6 literals (e.g. ::1 → http://[::1]:8080). */
 function httpOrigin(host, port) {
-  if (host.includes(':')) {
+  if (host.includes(':') && !host.includes('.')) {
     return `http://[${host}]:${port}`;
   }
   return `http://${host}:${port}`;
@@ -117,7 +120,7 @@ async function main() {
       shell: process.platform === 'win32',
     });
 
-    const apiReadyUrl = `${httpOrigin(probeHost, apiPort)}/api/health`;
+    const apiReadyUrl = `${httpOrigin(loopback, apiPort)}/api/health`;
     console.log('Waiting for API readiness:', apiReadyUrl);
     await waitForOk(apiReadyUrl, { timeoutMs: 120000 });
     console.log('API ready.');
@@ -126,7 +129,6 @@ async function main() {
     const clientEnv = {
       ...process.env,
       API_PORT: String(apiPort),
-      E2E_DEV_HOST: probeHost,
     };
     clientProc = spawn(
       'npm',
@@ -140,7 +142,7 @@ async function main() {
         String(uiPort),
         '--strictPort',
         '--host',
-        probeHost,
+        '0.0.0.0',
       ],
       {
         cwd: rootDir,
@@ -150,12 +152,12 @@ async function main() {
       },
     );
 
-    const uiReadyUrl = `${httpOrigin(probeHost, uiPort)}/`;
+    const uiReadyUrl = `${httpOrigin(loopback, uiPort)}/`;
     console.log('Waiting for UI readiness:', uiReadyUrl);
     await waitForOk(uiReadyUrl, { timeoutMs: 600000 });
     console.log('UI ready.');
 
-    const baseUrl = httpOrigin(probeHost, uiPort);
+    const baseUrl = httpOrigin(loopback, uiPort);
     console.log('Running Playwright with BASE_URL=' + baseUrl);
 
     exitCode = await new Promise((resolve) => {
@@ -165,7 +167,6 @@ async function main() {
           ...process.env,
           BASE_URL: baseUrl,
           API_PORT: String(apiPort),
-          E2E_DEV_HOST: probeHost,
         },
         stdio: 'inherit',
         shell: process.platform === 'win32',

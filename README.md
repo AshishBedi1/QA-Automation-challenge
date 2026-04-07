@@ -16,33 +16,36 @@ cd qa-automation-challenge
 npm install
 ```
 
-Install Playwright browsers once per machine (required before tests can run):
+### One-time: Playwright browsers (local / IDE)
 
 ```bash
 npx playwright install
 ```
 
-Run end-to-end tests (starts API + Vite on free ports, then runs Playwright):
+If the command finishes but prints **“Host system is missing dependencies to run browsers”**, install OS libraries (Linux; use **`sudo`** if needed):
+
+```bash
+sudo npx playwright install-deps
+```
+
+Or install the **`apt`** packages Playwright lists (GTK/Cairo, etc.). Some IDE images ship browsers/deps preinstalled — follow your environment docs.
+
+### Run E2E
 
 ```bash
 npm run test:e2e
 ```
 
-## Dependencies and IDE (Savyre / containers)
+## Savyre IDE / containers (`~/workspace`)
 
-- **`@playwright/test`** and **`tree-kill`** are listed under **`dependencies`** in the root `package.json` so a normal **`npm install`** (including environments that omit devDependencies) still has what **`scripts/run-e2e.js`** needs.
-- **`scripts/run-e2e.js`** probes **`http://[::1]:<port>/...`** by default (`E2E_PROBE_HOST` defaults to **`::1`**). In some environments Vite listens on IPv6 loopback only; **`http://localhost`** can resolve to **`127.0.0.1`** and hang. **`BASE_URL`** for Playwright uses the same host (e.g. **`http://[::1]:<uiPort>`**). Override if needed: `E2E_PROBE_HOST=localhost npm run test:e2e`.
-- Manual **`npm run dev -w client`** stays **`vite` only**; the e2e script passes **`--port --strictPort --host`** to match the probe host.
+- **`@playwright/test`** and **`tree-kill`** are root **`dependencies`** so **`npm install`** without devDependencies still works for **`scripts/run-e2e.js`**.
+- **`scripts/run-e2e.js`** uses **readiness URLs and `BASE_URL` on `http://127.0.0.1:<port>`** (not `localhost` alone), starts Vite with **`--host 0.0.0.0`** so IPv4 loopback works, and sets **`API_PORT`** for the client proxy. The API binds **`0.0.0.0`**. The Vite dev proxy targets **`http://127.0.0.1:${API_PORT}`** explicitly.
+- Optional override: **`E2E_PROBE_HOST`** if your environment cannot use **`127.0.0.1`** for probes.
+- Manual **`npm run dev -w client`** uses plain **`vite`**; **`run-e2e`** adds **`--port --strictPort --host 0.0.0.0`**.
 
-### Playwright browsers and OS libraries (Linux / IDE images)
+### Playwright cache paths
 
-After **`npx playwright install`**, if the browser fails to start, install system dependencies (Linux):
-
-```bash
-npx playwright install-deps
-```
-
-Or use **`sudo`** when the image requires it. Missing GTK / libnss often shows up as host-deps warnings in headless/IDE runs.
+Browsers may cache under **`~/.cache/ms-playwright`** or e.g. **`/config/.cache/ms-playwright`** in sandboxes.
 
 ## License
 

@@ -102,6 +102,6 @@ const server = http.createServer((req, res) => {
   res.end();
 });
 
-server.listen(PORT, () => {
-  console.log(`[server] listening on port ${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`[server] listening on 0.0.0.0:${PORT}`);
 });

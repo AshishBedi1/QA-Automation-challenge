@@ -15,5 +15,13 @@ module.exports = defineConfig({
     baseURL: baseURL || undefined,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+    // Chromium in Linux/Docker often needs these or JS never runs (static title passes, no <h1>).
+    launchOptions: {
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+      ],
+    },
   },
 });

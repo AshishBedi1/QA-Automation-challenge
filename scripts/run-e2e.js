@@ -43,6 +43,18 @@ function getFreePort() {
   });
 }
 
+/**
+ * When HTTP_PROXY/HTTPS_PROXY is set (e.g. corporate), Chromium may send
+ * http://127.0.0.1:… through the proxy and break fetch('/api/…'); curl can still work.
+ * Merge loopback into NO_PROXY / no_proxy for every child process.
+ */
+function withLocalLoopbackNoProxy(env) {
+  const loop = '127.0.0.1,localhost,::1';
+  const existing = [env.NO_PROXY, env.no_proxy].filter(Boolean).join(',');
+  const merged = existing.trim() ? `${loop},${existing}` : loop;
+  return { ...env, NO_PROXY: merged, no_proxy: merged };
+}
+
 function waitForOk(url, { intervalMs = 500, timeoutMs = 60000 } = {}) {
   const deadline = Date.now() + timeoutMs;
   return new Promise((resolve, reject) => {
@@ -117,7 +129,7 @@ async function main() {
     console.log('Starting API server…');
     serverProc = spawn('npm', ['run', 'dev', '-w', 'server'], {
       cwd: rootDir,
-      env: { ...process.env, PORT: String(apiPort) },
+      env: withLocalLoopbackNoProxy({ ...process.env, PORT: String(apiPort) }),
       stdio: 'inherit',
       shell: process.platform === 'win32',
     });
@@ -132,11 +144,11 @@ async function main() {
     e2eEnvLocalPath = path.join(clientDir, '.env.development.local');
     fs.writeFileSync(e2eEnvLocalPath, `API_PORT=${apiPort}\n`, 'utf8');
 
-    const clientEnv = {
+    const clientEnv = withLocalLoopbackNoProxy({
       ...process.env,
       API_PORT: String(apiPort),
       NODE_ENV: 'development',
-    };
+    });
     // Spawn Vite from client/ with explicit env. `npm run dev -w client` can
     // lose API_PORT on Windows/npm, so the proxy in vite.config.js falls back
     // to 3000 and /api/* returns 404 during e2e.
@@ -169,11 +181,11 @@ async function main() {
     exitCode = await new Promise((resolve) => {
       const pw = spawn('npx', ['playwright', 'test'], {
         cwd: rootDir,
-        env: {
+        env: withLocalLoopbackNoProxy({
           ...process.env,
           BASE_URL: baseUrl,
           API_PORT: String(apiPort),
-        },
+        }),
         stdio: 'inherit',
         shell: process.platform === 'win32',
       });

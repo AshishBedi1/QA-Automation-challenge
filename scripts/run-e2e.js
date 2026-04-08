@@ -126,18 +126,19 @@ async function main() {
     console.log('API ready.');
 
     console.log('Starting Vite dev server…');
+    const clientDir = path.join(rootDir, 'client');
     const clientEnv = {
       ...process.env,
       API_PORT: String(apiPort),
+      NODE_ENV: 'development',
     };
+    // Spawn Vite from client/ with explicit env. `npm run dev -w client` can
+    // lose API_PORT on Windows/npm, so the proxy in vite.config.js falls back
+    // to 3000 and /api/* returns 404 during e2e.
     clientProc = spawn(
-      'npm',
+      'npx',
       [
-        'run',
-        'dev',
-        '-w',
-        'client',
-        '--',
+        'vite',
         '--port',
         String(uiPort),
         '--strictPort',
@@ -145,7 +146,7 @@ async function main() {
         '0.0.0.0',
       ],
       {
-        cwd: rootDir,
+        cwd: clientDir,
         env: clientEnv,
         stdio: 'inherit',
         shell: process.platform === 'win32',

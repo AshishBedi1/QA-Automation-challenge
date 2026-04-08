@@ -13,7 +13,7 @@ module.exports = defineConfig({
   },
   use: {
     baseURL: baseURL || undefined,
-    trace: 'on-first-retry',
+    trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     // Chromium in Linux/Docker often needs these or JS never runs (static title passes, no <h1>).
     launchOptions: {
@@ -21,6 +21,8 @@ module.exports = defineConfig({
         '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
+        // curl can hit localhost while Chromium still uses a system/proxy path in some Docker setups
+        '--proxy-server=direct://',
       ],
     },
   },

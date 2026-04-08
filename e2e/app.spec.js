@@ -2,12 +2,14 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Course Marketplace', () => {
   test('home page loads with catalog heading', async ({ page }) => {
-    await page.goto('/');
-
-    await page.waitForResponse(
-      (r) => r.url().includes('/api/courses') && r.ok(),
-      { timeout: 60_000 },
-    );
+    // Listener must attach before navigation — /api/courses fires during initial load.
+    await Promise.all([
+      page.waitForResponse(
+        (r) => r.url().includes('/api/courses') && r.ok(),
+        { timeout: 60_000 },
+      ),
+      page.goto('/'),
+    ]);
 
     await expect(page).toHaveTitle(/Course Marketplace/);
     await expect(

@@ -84,6 +84,8 @@ async function main() {
 
   let serverProc;
   let clientProc;
+  /** Written before Vite starts so loadEnv() in vite.config.js always sees API_PORT (CI/Docker). */
+  let e2eEnvLocalPath;
 
   const cleanup = () => {
     if (clientProc && clientProc.pid && !clientProc.killed) {
@@ -127,6 +129,9 @@ async function main() {
 
     console.log('Starting Vite dev server…');
     const clientDir = path.join(rootDir, 'client');
+    e2eEnvLocalPath = path.join(clientDir, '.env.development.local');
+    fs.writeFileSync(e2eEnvLocalPath, `API_PORT=${apiPort}\n`, 'utf8');
+
     const clientEnv = {
       ...process.env,
       API_PORT: String(apiPort),
@@ -180,6 +185,15 @@ async function main() {
     });
   } finally {
     cleanup();
+    // Let Vite exit before removing .env.development.local so it doesn’t log "env changed, restarting".
+    await new Promise((r) => setTimeout(r, 600));
+    if (e2eEnvLocalPath && fs.existsSync(e2eEnvLocalPath)) {
+      try {
+        fs.unlinkSync(e2eEnvLocalPath);
+      } catch (_) {
+        /* ignore */
+      }
+    }
     await new Promise((r) => setTimeout(r, 400));
   }
 

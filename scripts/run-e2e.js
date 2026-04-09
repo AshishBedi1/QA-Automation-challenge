@@ -55,6 +55,25 @@ function withLocalLoopbackNoProxy(env) {
   return { ...env, NO_PROXY: merged, no_proxy: merged };
 }
 
+/**
+ * Env for the Playwright child only. NO_PROXY + direct:// is not always enough: Docker/npm
+ * may set HTTP(S)_PROXY and Chromium still routes 127.0.0.1 through it while curl does not.
+ */
+function envForPlaywrightChild(baseEnv) {
+  const e = withLocalLoopbackNoProxy({ ...baseEnv });
+  for (const k of [
+    'HTTP_PROXY',
+    'HTTPS_PROXY',
+    'ALL_PROXY',
+    'http_proxy',
+    'https_proxy',
+    'all_proxy',
+  ]) {
+    delete e[k];
+  }
+  return e;
+}
+
 function waitForOk(url, { intervalMs = 500, timeoutMs = 60000 } = {}) {
   const deadline = Date.now() + timeoutMs;
   return new Promise((resolve, reject) => {
@@ -181,7 +200,7 @@ async function main() {
     exitCode = await new Promise((resolve) => {
       const pw = spawn('npx', ['playwright', 'test'], {
         cwd: rootDir,
-        env: withLocalLoopbackNoProxy({
+        env: envForPlaywrightChild({
           ...process.env,
           BASE_URL: baseUrl,
           API_PORT: String(apiPort),

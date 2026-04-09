@@ -23,6 +23,7 @@ module.exports = defineConfig({
         '--disable-dev-shm-usage',
         // curl can hit localhost while Chromium still uses a system/proxy path in some Docker setups
         '--proxy-server=direct://',
+        '--proxy-bypass-list=<-loopback>',
       ],
     },
   },

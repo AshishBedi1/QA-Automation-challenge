@@ -167,6 +167,7 @@ async function main() {
       ...process.env,
       API_PORT: String(apiPort),
       NODE_ENV: 'development',
+      RUN_E2E: '1',
     });
     // Spawn Vite from client/ with explicit env. `npm run dev -w client` can
     // lose API_PORT on Windows/npm, so the proxy in vite.config.js falls back

@@ -1,7 +1,7 @@
 const { defineConfig } = require('@playwright/test');
 
-/** Set by scripts/run-e2e.js via BASE_URL only (e.g. http://127.0.0.1:<uiPort>). No hardcoded URLs. */
-const baseURL = process.env.BASE_URL || '';
+/** Savyre runner and run-e2e set BASE_URL; some setups only set PLAYWRIGHT_BASE_URL. */
+const baseURL = process.env.BASE_URL || process.env.PLAYWRIGHT_BASE_URL || '';
 
 module.exports = defineConfig({
   testDir: './e2e',

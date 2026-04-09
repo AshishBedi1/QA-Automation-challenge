@@ -17,7 +17,8 @@ function stripPreviewInjectForE2e() {
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  const apiPort = env.API_PORT || process.env.API_PORT || '3000'
+  // Prefer OS env (set by Savyre workspace / CI) over .env files so submit-time proxy matches the real backend port.
+  const apiPort = process.env.API_PORT || env.API_PORT || '3000'
 
   return {
     plugins: [react(), stripPreviewInjectForE2e()],

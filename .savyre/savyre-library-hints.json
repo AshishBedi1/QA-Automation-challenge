@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Copy these fields onto the Savyre Library question for QA Playwright (candidate branch assessment).",
+  "repoUrl": "https://github.com/YOUR_ORG/qa-automation-challenge.git",
+  "repoBranch": "feature/e2e-course-marketplace-home-smoke-test",
+  "playwrightQaOverlayGoldTests": false,
+  "playwrightQaE2ePaths": ["e2e/app.spec.js"],
+  "playwrightQaE2eGrep": null,
+  "playwrightQaE2eProject": null,
+  "notes": "main holds the reference passing spec; this branch has the same app code with a stub e2e/app.spec.js. Scoring runs only e2e/app.spec.js against the candidate workspace (no gold overlay)."
+}

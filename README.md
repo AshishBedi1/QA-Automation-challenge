@@ -60,6 +60,13 @@ Open the Vite URL (e.g. `http://127.0.0.1:5173`). The catalog should load; **`GE
 
 Browsers may cache under **`~/.cache/ms-playwright`** or e.g. **`/config/.cache/ms-playwright`** in sandboxes.
 
+## Savyre assessment (QA Playwright)
+
+- **`main`**: reference branch — `e2e/app.spec.js` contains a **passing** smoke test (use for review or gold comparison only).
+- **`feature/e2e-course-marketplace-home-smoke-test`** (or your configured candidate branch): **same application code** as `main`, but `e2e/app.spec.js` is a **stub** for the candidate to complete. Evaluation scores **only** that file when the library sets `playwrightQaE2ePaths: ["e2e/app.spec.js"]` and `playwrightQaOverlayGoldTests: false`.
+
+See [`.savyre/savyre-library-hints.json`](./.savyre/savyre-library-hints.json) for fields to paste into the Savyre library question.
+
 ## License
 
 MIT — see [LICENSE](./LICENSE).

@@ -1,26 +1,23 @@
 import { test, expect } from '@playwright/test';
 
+/**
+ * Candidate task: implement the Playwright checks below.
+ * Application code matches `main`; only this spec is incomplete until you finish it.
+ *
+ * Contract (see `.savyre/bug-info.json` and README):
+ * - Open `/` — document title should match /Course Marketplace/
+ * - "Loading courses" should disappear; no stuck "failed to load courses"
+ * - Visible h1 "Course Marketplace"
+ * - Visible tagline containing "Browse courses and buy your next skill"
+ *
+ * Local check: `npm run test:e2e` from repo root.
+ */
 test.describe('Course Marketplace', () => {
   test('home page loads with catalog heading', async ({ page }) => {
-    // Do not use waitForResponse(/api/courses): it is flaky in some Docker/Playwright
-    // setups (response events vs fetch timing). Proxy + API are validated by the UI:
-    // <h1> only renders after /api/courses succeeds (see App.jsx).
     await page.goto('/');
 
-    await expect(page).toHaveTitle(/Course Marketplace/);
-    await expect(page.getByText(/loading courses/i)).not.toBeVisible({
-      timeout: 60_000,
-    });
-    await expect(
-      page.getByText(/failed to load courses/i),
-      '/api/courses failed in the browser (often Chromium proxy vs curl). Check playwright launchOptions and run-e2e NO_PROXY.',
-    ).not.toBeVisible();
-    await expect(
-      page.getByRole('heading', { name: 'Course Marketplace', level: 1 }),
-      'Catalog should render after courses load.',
-    ).toBeVisible({ timeout: 60_000 });
-    await expect(
-      page.getByText(/Browse courses and buy your next skill/i),
-    ).toBeVisible({ timeout: 15_000 });
+    // TODO: Replace this placeholder with real assertions (title, loading/error states, h1, tagline).
+    // Remove the line below when your tests are complete.
+    await expect(page.getByTestId('candidate-placeholder-remove-me')).toBeVisible();
   });
 });

@@ -1,6 +1,6 @@
 # QA automation challenge
 
-Minimal monorepo for a Playwright end-to-end flow: **npm install** at the repo root, then **npm run test:e2e**. Works on Linux with Node 20 and npm (no pnpm-only features).
+Minimal monorepo for a Playwright end-to-end flow: **npm install** at the repo root. For the **assessment** (only `e2e/app.spec.js`, aligned with Savyre scoring), use **`npm run test:e2e:assignment`**. For every file under `e2e/`, use **`npm run test:e2e`**. Works on Linux with Node 20 and npm (no pnpm-only features).
 
 ## Layout
 
@@ -32,9 +32,19 @@ Or install the **`apt`** packages Playwright lists (GTK/Cairo, etc.). Some IDE i
 
 ### Run E2E
 
+**Assessment (scoped — same file Savyre scores when `playwrightQaE2ePaths` is `e2e/app.spec.js`):**
+
+```bash
+npm run test:e2e:assignment
+```
+
+**Full `e2e/` directory:**
+
 ```bash
 npm run test:e2e
 ```
+
+Pass extra paths through the root runner, e.g. `npm run test:e2e -- e2e/other.spec.js`.
 
 ## Savyre IDE / containers (`~/workspace`)
 
@@ -59,6 +69,13 @@ Open the Vite URL (e.g. `http://127.0.0.1:5173`). The catalog should load; **`GE
 ### Playwright cache paths
 
 Browsers may cache under **`~/.cache/ms-playwright`** or e.g. **`/config/.cache/ms-playwright`** in sandboxes.
+
+## Savyre assessment (QA Playwright)
+
+- **`main`**: reference branch — `e2e/app.spec.js` contains a **passing** smoke test (use for review or gold comparison only).
+- **`feature/e2e-course-marketplace-home-smoke-test`** (or your configured candidate branch): **same application code** as `main`, but `e2e/app.spec.js` is a **stub** for the candidate to complete. Evaluation scores **only** that file when the library sets `playwrightQaE2ePaths: ["e2e/app.spec.js"]` and `playwrightQaOverlayGoldTests: false`. Candidates should verify with **`npm run test:e2e:assignment`** before submit.
+
+See [`.savyre/savyre-library-hints.json`](./.savyre/savyre-library-hints.json) for fields to paste into the Savyre library question.
 
 ## License
 

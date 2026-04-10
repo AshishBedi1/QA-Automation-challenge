@@ -8,7 +8,8 @@
   ],
   "scripts": {
     "server": "npm run dev -w server",
-    "test:e2e": "node scripts/run-e2e.js"
+    "test:e2e": "node scripts/run-e2e.js",
+    "test:e2e:assignment": "node scripts/run-e2e.js e2e/app.spec.js"
   },
   "dependencies": {
     "@playwright/test": "^1.49.0",

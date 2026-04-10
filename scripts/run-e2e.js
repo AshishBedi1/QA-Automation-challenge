@@ -101,6 +101,9 @@ function waitForOk(url, { intervalMs = 500, timeoutMs = 60000 } = {}) {
 }
 
 async function main() {
+  /** Extra args forwarded to `npx playwright test` (e.g. `e2e/app.spec.js` for assignment-only). */
+  const playwrightTestArgs = process.argv.slice(2).filter(Boolean);
+
   const dataDir = path.join(rootDir, 'data');
   const dbPath = path.join(dataDir, 'app.db');
   if (fs.existsSync(dbPath)) {
@@ -197,9 +200,13 @@ async function main() {
 
     const baseUrl = httpOrigin(loopback, uiPort);
     console.log('Running Playwright with BASE_URL=' + baseUrl);
+    if (playwrightTestArgs.length) {
+      console.log('Playwright extra args:', playwrightTestArgs.join(' '));
+    }
 
     exitCode = await new Promise((resolve) => {
-      const pw = spawn('npx', ['playwright', 'test'], {
+      const pwArgv = ['playwright', 'test', ...playwrightTestArgs];
+      const pw = spawn('npx', pwArgv, {
         cwd: rootDir,
         env: envForPlaywrightChild({
           ...process.env,

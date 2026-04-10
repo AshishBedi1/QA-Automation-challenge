@@ -7,9 +7,10 @@
     "server"
   ],
   "scripts": {
+    "server": "npm run dev -w server",
     "test:e2e": "node scripts/run-e2e.js"
   },
-  "devDependencies": {
+  "dependencies": {
     "@playwright/test": "^1.49.0",
     "tree-kill": "^1.2.2"
   }

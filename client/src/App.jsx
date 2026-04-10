@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import './App.css'
+import { previewAwareFetch } from './previewApi.js'
 
 const ALL = 'All'
 const FALLBACK_THUMB = '/thumbnails/course-0.svg'
@@ -35,7 +36,7 @@ export default function App() {
 
   useEffect(() => {
     let cancelled = false
-    fetch('/api/courses')
+    previewAwareFetch('/api/courses')
       .then((r) => {
         if (!r.ok) throw new Error('Failed to load courses')
         return r.json()
@@ -93,7 +94,7 @@ export default function App() {
     setCheckoutBusy(true)
     try {
       for (const c of cartItems) {
-        const r = await fetch('/api/purchase', {
+        const r = await previewAwareFetch('/api/purchase', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ courseId: c.id }),

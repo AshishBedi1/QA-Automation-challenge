@@ -1,6 +1,7 @@
+
 {
-  "description": "Implement the Playwright test in `e2e/app.spec.js` for the Course Marketplace home page. Application code is correct and matches `main`; your job is test automation only. The spec must verify that the public home loads: document title matches Course Marketplace, loading and error states resolve, the level-1 heading \"Course Marketplace\" is visible, and the tagline about browsing courses appears. Run `npm run test:e2e` from the repo root (runner sets BASE_URL). Do not hardcode ports.",
-  "expectedOutcome": "`npm run test:e2e` passes: Playwright uses BASE_URL, asserts title / h1 / tagline per the task, with no flaky hardcoded URLs. Same UI contract as the reference implementation on `main`.",
-  "hint": "Use `page.goto('/')` then assertions on title, `getByRole('heading', …)`, and visible text. Follow `.savyre/savyre-library-hints.json` when configuring the Savyre library (scored path `e2e/app.spec.js`, overlay off).",
+  "description": "Your task is to write a Playwright test for the Course Marketplace home page in `e2e/app.spec.js`. The application is already working correctly, so you only need to focus on writing the test.\n\nThe test should:\n- Navigate to the home page using `page.goto('/')` (do not hardcode URLs or ports)\n- Verify that the page title is \"Course Marketplace\"\n- Ensure any loading or error states are resolved before assertions\n- Check that a level-1 heading with the text \"Course Marketplace\" is visible\n- Verify that the tagline about browsing courses is visible on the page",
+  "expectedOutcome": "When you run `npm run test:e2e`, all tests should pass. The test should rely on the provided BASE_URL configuration and should not contain any hardcoded URLs. Assertions should correctly validate the title, heading, and tagline.",
+  "hint": "Use Playwright methods like `page.goto('/')`, `page.title()`, `getByRole('heading', { level: 1 })`, and `getByText()` to implement your assertions. Avoid hardcoding values like ports or full URLs.",
   "bugFilePath": "e2e/app.spec.js"
 }

@@ -1,6 +1,12 @@
 {
-  "description": "Implement the Playwright test in `e2e/app.spec.js` for the Course Marketplace home page. Application code is correct and matches `main`; your job is test automation only. The spec must verify that the public home loads: document title matches Course Marketplace, loading and error states resolve, the level-1 heading \"Course Marketplace\" is visible, and the tagline about browsing courses appears. Before submit, verify from the repo root with **`npm run test:e2e:assignment`** — it runs only `e2e/app.spec.js`, matching what Savyre scores (`playwrightQaE2ePaths`). Do not hardcode ports.",
-  "expectedOutcome": "**`npm run test:e2e:assignment` passes**: Playwright uses BASE_URL from the runner, asserts title / h1 / tagline per the task, with no flaky hardcoded URLs. Same UI contract as the reference implementation on `main`. Optional: `npm run test:e2e` runs all files under `e2e/`.",
-  "hint": "Use `page.goto('/')` then assertions on title, `getByRole('heading', …)`, and visible text. Prefer `npm run test:e2e:assignment` so local runs match Savyre (`playwrightQaE2ePaths: [\"e2e/app.spec.js\"]`).",
-  "bugFilePath": "e2e/app.spec.js"
+  "description": "When the user navigates through this flow on the checkout page and the confirmation page, the Playwright suite is missing automated coverage for that journey (Cover the end-to-end checkout journey: add product to cart, go to checkout, enter shipping details, place order, and verify confirmation page shows correct order ID, item count, and total amount.). Instead, a test should click and type through the same steps and assert what appears on each page and on the summary list.",
+  "expectedOutcome": "When the user navigates the flow after you add tests, they should see the same UI on each page and the confirmation page must display the correct summary so automated checks reflect the real behaviour.",
+  "hint": "Inspect app.spec.js under the tests folder and extend the describe block with new steps; reuse existing patterns for the login form and primary button before adding expects that read visible page text.",
+  "difficulty": "Easy",
+  "competency": "QA Automation",
+  "bugFilePath": "tests/app.spec.js",
+  "solution": "This breaks automated regression because coverage is missing for the described flow; the fix is to add Playwright steps that mirror the user journey, assert visible text on each page, and confirm the final screen shows the expected summary so npm run e2e passes once the flow is fully automated.",
+  "solutionCode": "import { test, expect } from '@playwright/test';\n\ntest('covers assigned flow end-to-end', async ({ page }) => {\n  await page.goto('/');\n  await expect(page.locator('body')).toBeVisible();\n});\n",
+  "playwrightTests": "Playwright tests fail or are incomplete until the candidate adds the missing automation for the flow; they pass after the new test asserts the same user-visible behaviour as on the default branch.",
+  "playwrightTestSnippets": "tests/app.spec.js — add or extend this spec so the flow is covered; use fail-then-pass checks against the running app."
 }

@@ -1,6 +1,12 @@
 {
-  "description": "Implement the Playwright test in `e2e/app.spec.js` for the Course Marketplace home page. Application code is correct and matches `main`; your job is test automation only. The spec must verify that the public home loads: document title matches Course Marketplace, loading and error states resolve, the level-1 heading \"Course Marketplace\" is visible, and the tagline about browsing courses appears. Before submit, verify from the repo root with **`npm run test:e2e:assignment`** — it runs only `e2e/app.spec.js`, matching what Savyre scores (`playwrightQaE2ePaths`). Do not hardcode ports.",
-  "expectedOutcome": "**`npm run test:e2e:assignment` passes**: Playwright uses BASE_URL from the runner, asserts title / h1 / tagline per the task, with no flaky hardcoded URLs. Same UI contract as the reference implementation on `main`. Optional: `npm run test:e2e` runs all files under `e2e/`.",
-  "hint": "Use `page.goto('/')` then assertions on title, `getByRole('heading', …)`, and visible text. Prefer `npm run test:e2e:assignment` so local runs match Savyre (`playwrightQaE2ePaths: [\"e2e/app.spec.js\"]`).",
-  "bugFilePath": "e2e/app.spec.js"
+  "description": "The Playwright suite is missing automated coverage for this user journey: Automate the \"home page loads with catalog heading\" user journey end to end using Playwright. Focus on routes \"/\" and verify visible user outcomes.. Add or extend a test that performs the same user actions and asserts visible outcomes.",
+  "expectedOutcome": "After adding Playwright coverage for \"Automate the \"home page loads with catalog heading\" user journey end to end using Playwright. Focus on routes \"/\" and verify visible user outcomes.\", the test should pass by asserting the expected user-visible behaviour for that journey.",
+  "hint": "Inspect app.spec.js (e2e/app.spec.js) and extend an existing describe/test block with steps and expects that cover this journey end to end.",
+  "difficulty": "Easy",
+  "competency": "QA Automation",
+  "bugFilePath": "e2e/app.spec.js",
+  "solution": "This is an automation coverage gap. The fix is to add Playwright steps that mirror the described journey, then assert visible outcomes so npm run test:e2e fails before coverage is added and pass once it is complete.",
+  "solutionCode": "import { test, expect } from '@playwright/test';\n\ntest('covers assigned flow end-to-end', async ({ page }) => {\n  await page.goto('/');\n  await expect(page.locator('body')).toBeVisible();\n});\n",
+  "playwrightTests": "Playwright tests fail or are incomplete until the candidate adds the missing automation for the flow; they pass after the new test asserts the same user-visible behaviour as on the default branch.",
+  "playwrightTestSnippets": "e2e/app.spec.js — add or extend this spec so the flow is covered; use fail-then-pass checks against the running app."
 }
